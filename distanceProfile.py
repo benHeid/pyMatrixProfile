@@ -30,7 +30,7 @@ def stampDistanceProfile(tsA, idx, m, tsB = None):
     array([[ 2.   ,  2.828,  2.   ],
            [ 0.   ,  0.   ,  0.   ]])
     """
-    selfJoin = False
+    selfJoin = True
     if tsB is None:
         selfJoin = True
         tsB = tsA
@@ -39,8 +39,8 @@ def stampDistanceProfile(tsA, idx, m, tsB = None):
     n = len(tsB)
     distanceProfile = mass(query, tsB)
     if selfJoin:
-        trivialMatchRange = (max(0, idxToProcess - m / 2), min(idxToProcess + m / 2 + 1, len(tsB)))
-        distanceProfile[trivialMatchRange[0] : trivialMatchRange[1]] = np.inf
+        trivialMatchRange = (max(0, idx - m / 4), min(idx + m / 4 , len(tsB)))
+        distanceProfile[int(trivialMatchRange[0]) : int(trivialMatchRange[1])] = np.inf
     return (distanceProfile, np.full(n - m + 1, idx, dtype = float))
 
 if __name__ == "__main__":

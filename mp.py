@@ -6,15 +6,15 @@ import order
 def _matrixProfile(tsA, m, orderClass, distanceProfileFunction, tsB = None):
     order = orderClass(len(tsA) - m + 1)
 
-    mp = np.full(len(tsB) - m + 1, np.inf)
+    mp = np.full(len(tsA) - m + 1, np.inf)
     mpIndex = np.full(len(tsB) - m + 1, None, dtype = np.float)
     idx = order.next()
-    while idx != None:
+    for idx in range(len(tsA)-m+1):
         (distanceProfile, querySegementsId) = distanceProfileFunction(tsA, idx, m, tsB)
         idsToUpdate = distanceProfile < mp
         mpIndex[idsToUpdate] = querySegementsId[idsToUpdate]
-        mp = np.minimum(mp, distanceProfile)
-        idx = order.next()
+        mp[idsToUpdate] = distanceProfile[idsToUpdate]
+        #idx = order.next()
 
     return (mp, mpIndex)
 

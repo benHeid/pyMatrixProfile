@@ -14,7 +14,7 @@ def zNormalize(ts):
     """
     ts -= np.mean(ts)
     stdev = np.std(ts)
-    if stdev <> 0:
+    if stdev != 0:
         ts /= stdev
     return ts
 
@@ -30,7 +30,7 @@ def zNormalizedEuclideanDistance(tsA, tsB):
     >>> np.round(zNormalizedEuclideanDistance(np.array([0.0, 2.0, -2.0, 0.0]), np.array([1.0, 5.0, 3.0, 3.0])), 3)
     2.0
     """
-    if len(tsA) <> len(tsB):
+    if len(tsA) != len(tsB):
         raise ValueError("tsA and tsB must be of the same length")
     return np.linalg.norm(zNormalize(tsA.astype("float64")) - zNormalize(tsB.astype("float64")))
 
@@ -47,14 +47,14 @@ def movstd(ts, m):
     sSq = np.insert(np.cumsum(ts ** 2), 0, 0)
     segSum = s[m:] - s[:-m]
     segSumSq = sSq[m:] - sSq[:-m]
-    return np.sqrt(segSumSq / m - (segSum / m) ** 2)
+    return np.sqrt(np.abs(segSumSq / m - (segSum / m) ** 2))
 
 def mass(query, ts):
     """
     >>> np.round(mass(np.array([0.0, 1.0, -1.0, 0.0]), np.array([-1, 1, 0, 0, -1, 1])), 3)
     array([ 2.   ,  2.828,  2.   ])
     """
-    query = zNormalize(query)
+    query = zNormalize(query.copy())
     m = len(query)
     n = len(ts)
 
@@ -62,7 +62,7 @@ def mass(query, ts):
     query = query[::-1]
     query = np.pad(query, (0, n - m), 'constant')
     dots = fft.irfft(fft.rfft(ts) * fft.rfft(query))
-    return np.sqrt(2 * (m - (dots[m - 1 :] / stdv)))
+    return np.sqrt(np.abs(2 * (m - (dots[m - 1 :] / stdv))))
 
 if __name__ == "__main__":
     import doctest
